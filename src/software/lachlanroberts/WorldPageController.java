@@ -41,7 +41,6 @@ public class WorldPageController {
         // Load the image
         Image new_img = new Image("dndmap.jpg");
         scroll_img.setImage(new_img);
-//        calculate_scroll_differences();
     }
 
     public void image_pane_mouse_clicked(MouseEvent mouseEvent) {
@@ -49,10 +48,6 @@ public class WorldPageController {
         double selected_y = (scroll_difference_y * img_pane.getVvalue()) + mouseEvent.getY();
         double selected_x = (scroll_difference_x * img_pane.getHvalue()) + mouseEvent.getX();
         System.out.println("X: " + selected_x + " Y: " + selected_y);
-
-
-//        System.out.println("Pixels from top = " + pixels_from_top);
-//        System.out.println("Mouse: " + mouseEvent.getX() + " " + mouseEvent.getY());
     }
 
 
