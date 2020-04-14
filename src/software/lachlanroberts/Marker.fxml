@@ -7,11 +7,25 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="software.lachlanroberts.MarkerController"
             prefHeight="400.0" prefWidth="600.0"
             fx:id="anchor">
-    <Label text="test" />
-<!--    <ImageView fx:id="icon" />-->
+    <GridPane fx:id="outer_grid">
+        <ImageView fx:id="icon"  GridPane.rowIndex="0" GridPane.columnIndex="0"/> <!--onMouseEntered="#mouse_entered" onMouseExited="#mouse_exited"-->
+        <GridPane fx:id="form_grid" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-background-color: lightgrey; -fx-background-radius: 5;" hgap="10" vgap="10">
+            <rowConstraints>
+                <RowConstraints maxHeight="25" minHeight="25"/>
+            </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints maxWidth="75" minWidth="75"/>
+            </columnConstraints>
+            <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+            <Label fx:id="title_label" text="Title:"  GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="title_textfield" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="150"/>
+            <Button text="Create Marker" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+        </GridPane>
+    </GridPane>
 </AnchorPane>

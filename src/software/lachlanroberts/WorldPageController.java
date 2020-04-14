@@ -28,6 +28,8 @@ public class WorldPageController implements Initializable {
 
     private double scroll_difference_y = 0;
     private double scroll_difference_x = 0;
+    private double image_width = 0;
+    private double image_height = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,26 +45,28 @@ public class WorldPageController implements Initializable {
     public void calculate_scroll_differences() {
         // Calculate the height difference
         double scroll_pane_height = img_pane.getViewportBounds().getHeight();
-        double image_height = scroll_img.getImage().getHeight();
+        image_height = scroll_img.getImage().getHeight();
         scroll_difference_y = calculate_difference(image_height, scroll_pane_height);
 
         // Calculate the width difference
         double scroll_pane_width = img_pane.getViewportBounds().getWidth();
-        double image_width = scroll_img.getImage().getWidth();
+        image_width = scroll_img.getImage().getWidth();
         scroll_difference_x = calculate_difference(image_width, scroll_pane_width);
     }
 
 
     public void image_pane_mouse_clicked(MouseEvent mouseEvent) throws IOException {
-        calculate_scroll_differences();
-        double selected_y = (scroll_difference_y * img_pane.getVvalue()) + mouseEvent.getY();
-        double selected_x = (scroll_difference_x * img_pane.getHvalue()) + mouseEvent.getX();
-        System.out.println("X: " + selected_x + " Y: " + selected_y);
+        if (mouseEvent.getClickCount() == 2) {
+            calculate_scroll_differences();
+            double selected_y = (scroll_difference_y * img_pane.getVvalue()) + mouseEvent.getY();
+            double selected_x = (scroll_difference_x * img_pane.getHvalue()) + mouseEvent.getX();
+            System.out.println("X: " + selected_x + " Y: " + selected_y);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
-        group_stack.getChildren().add(fxmlLoader.load());
-        MarkerController marker = fxmlLoader.<MarkerController>getController();
-        marker.set_anchor(selected_x, selected_y);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
+            group_stack.getChildren().add(fxmlLoader.load());
+            MarkerController marker = fxmlLoader.<MarkerController>getController();
+            marker.set_marker_point(selected_x, selected_y, image_width, image_height);
+        }
     }
 
 

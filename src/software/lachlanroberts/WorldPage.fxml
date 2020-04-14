@@ -8,7 +8,7 @@
 <?import javafx.scene.Group?>
 <ScrollPane fx:controller="software.lachlanroberts.WorldPageController" fx:id="img_pane" onMouseClicked="#image_pane_mouse_clicked" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <content>
-      <Group fx:id="group_stack">
+      <Group fx:id="group_stack" autoSizeChildren="false">
          <ImageView fx:id="scroll_img" />
       </Group>
    </content>
