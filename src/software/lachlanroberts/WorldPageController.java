@@ -2,15 +2,18 @@ package software.lachlanroberts;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 import java.awt.*;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class WorldPageController {
+public class WorldPageController implements Initializable {
     @FXML
     public ImageView scroll_img;
     @FXML
@@ -18,6 +21,12 @@ public class WorldPageController {
 
     private double scroll_difference_y = 0;
     private double scroll_difference_x = 0;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Image new_img = new Image("dndmap.jpg");
+        scroll_img.setImage(new_img);
+    }
 
 
     private double calculate_difference(double num_1, double num_2) {
@@ -37,11 +46,11 @@ public class WorldPageController {
         System.out.println(scroll_difference_x);
     }
 
-    public void load_image_clicked(ActionEvent actionEvent) {
-        // Load the image
-        Image new_img = new Image("dndmap.jpg");
-        scroll_img.setImage(new_img);
-    }
+//    public void load_image_clicked(ActionEvent actionEvent) {
+//        // Load the image
+//        Image new_img = new Image("dndmap.jpg");
+//        scroll_img.setImage(new_img);
+//    }
 
     public void image_pane_mouse_clicked(MouseEvent mouseEvent) {
         calculate_scroll_differences();
