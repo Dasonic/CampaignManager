@@ -1,31 +1,37 @@
 package software.lachlanroberts;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 public class MarkerController {
     @FXML
-    private AnchorPane anchor;
+    private AnchorPane icon_anchor;
+    @FXML
+    private Group group;
     @FXML
     private ImageView icon;
     @FXML
-    private Label title_label;
-    @FXML
     private TextField title_textfield;
     @FXML
-    private GridPane form_grid;
+    private TextArea description_textarea;
     @FXML
-    private GridPane outer_grid;
+    private Button form_button;
+    @FXML
+    private VBox form_vbox;
 
     private double img_offset_x;
     private double img_offset_y;
+    private String title;
+    private String description;
+    private long last_hidden = 0;
 
     @FXML
     private void initialize() {
@@ -37,48 +43,72 @@ public class MarkerController {
     }
 
     public void set_marker_point(double x, double y, double image_width, double image_height) {
-        double anchor_offset_x = img_offset_x;
-        double anchor_offset_y = img_offset_y * 2;
+        // Set the icon to where the mouse clicked
+        icon_anchor.setLayoutX(x - img_offset_x);
+        icon_anchor.setLayoutY(y - img_offset_y);
 
-        double grid_height = 2 * 25 + 20;
-        double grid_width = 150 + 75 + 20;
-
-        if ((grid_height + img_offset_y + y > image_height)) { // Form near bottom of screen
-            GridPane.setRowIndex(form_grid, 0);
-            GridPane.setRowIndex(icon, 1);
-            // In this case, the anchor point will need to be the icon height + the form height
-            anchor_offset_y = img_offset_y + grid_height;
-        }
-        if (y < grid_height) { // Form near top of screen
-            if (y < img_offset_y) { // If the form would extend the screen
-                anchor.setVisible(false);
+        // Set the form to next to the icon, depending on how close to the edge
+        // Base case
+        double form_vbox_y_offset = form_vbox.getHeight() / 2;
+        double form_vbox_x_offset = - img_offset_x * 2;
+        // Too close to bottom of screen
+        if ((y + form_vbox.getHeight()) >= image_height) {
+            form_vbox_y_offset *= 2;
+        // Too close to top of screen
+        } else if (y < form_vbox.getHeight() / 2) {
+            form_vbox_y_offset = img_offset_y;
+            if (y < img_offset_y) { // Too close to top of screen to create marker
+                group.setVisible(false);
                 System.err.println("WARNING: Marker too close to top, setting to invisible...");
             }
-            GridPane.setRowIndex(form_grid, 1);
-            GridPane.setRowIndex(icon, 0);
-            // In this case, the anchor point will need to be the icon height + the form height
-            anchor_offset_y = img_offset_y;
         }
-        if ((grid_width + img_offset_x + x) > image_width) { // Form near right hand side of screen
-            if (x > image_width - img_offset_x) { // If the form would extend the screen
-                anchor.setVisible(false);
-                System.err.println("WARNING: Marker too close to right, setting to invisible...");
+        // Too close to right side of screen
+        if ((x - form_vbox_x_offset + form_vbox.getWidth()) > image_width) {
+            form_vbox_x_offset = -form_vbox_x_offset + form_vbox.getWidth();
+            if (x > image_width - img_offset_x) { // Too close to right of screen to create marker
+                group.setVisible(false);
+                System.err.println("WARNING: Marker too close to right side, setting to invisible...");
             }
-            GridPane.setColumnIndex(form_grid, 0);
-            GridPane.setColumnIndex(icon, 1);
-            // In this case, the anchor point will need to be the icon width + the form width
-            anchor_offset_x = img_offset_x + grid_width;
         }
 
-        anchor.setLayoutX(x - anchor_offset_x);
-        anchor.setLayoutY(y - anchor_offset_y);
+        form_vbox.setLayoutY(y - form_vbox_y_offset);
+        form_vbox.setLayoutX(x - form_vbox_x_offset);
+
     }
 
-    public void mouse_entered(MouseEvent mouseEvent) {
-        title_label.setVisible(true);
+    public void set_visible(boolean value) {
+        if (System.currentTimeMillis() > (100 + last_hidden)) {
+            if (!value) { // Remove unsaved changes when hiding
+                title_textfield.setText(title);
+                description_textarea.setText(description);
+                title_textfield.setDisable(true);
+                description_textarea.setDisable(true);
+            }
+            form_vbox.setVisible(value);
+            last_hidden = System.currentTimeMillis();
+        }
     }
 
-    public void mouse_exited(MouseEvent mouseEvent) {
-        title_label.setVisible(false);
+    public boolean is_confirmed() {
+        return (title != null);
+    }
+
+
+    public void submit_form(MouseEvent mouseEvent) {
+        if (title_textfield.isDisabled()) { // Allow editing
+            title_textfield.setDisable(false);
+            description_textarea.setDisable(false);
+            form_button.setText("Confirm Marker");
+        } else { // Save new details!
+            title = title_textfield.getText();
+            description = description_textarea.getText();
+            title_textfield.setDisable(true);
+            description_textarea.setDisable(true);
+            form_button.setText("Edit Marker");
+        }
+    }
+
+    public void icon_clicked(MouseEvent mouseEvent) {
+        set_visible(true);
     }
 }
