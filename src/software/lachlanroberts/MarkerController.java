@@ -32,10 +32,11 @@ public class MarkerController {
     private String title;
     private String description;
     private long last_hidden = 0;
-    private double stored_anchor_x = 0;
-    private double stored_anchor_y = 0;
-    private double stored_form_x = 0;
-    private double stored_form_y = 0;
+
+    private double point_x = 0;
+    private double point_y = 0;
+    private double form_vbox_x_offset = 0;
+    private double form_vbox_y_offset = 0;
 
     @FXML
     private void initialize() {
@@ -47,25 +48,33 @@ public class MarkerController {
     }
 
     public void set_zoom_level(double zoom_level) {
-        icon_anchor.setLayoutX(stored_anchor_x * zoom_level);
-        icon_anchor.setLayoutY(stored_anchor_y * zoom_level);
-        form_vbox.setLayoutX(stored_form_x * zoom_level);
-        form_vbox.setLayoutY(stored_form_y * zoom_level);
+        set_layout(zoom_level);
     }
 
-    public void set_marker_point(double x, double y, double image_width, double image_height) {
-        // Set the icon to where the mouse clicked
-        stored_anchor_x = x - img_offset_x;
-        stored_anchor_y = y - img_offset_y;
-        icon_anchor.setLayoutX(stored_anchor_x);
-        icon_anchor.setLayoutY(stored_anchor_y);
+    private void set_layout(double zoom_level) {
+        double x = point_x * zoom_level;
+        double y = point_y * zoom_level;
 
+        // Set the icon
+        icon_anchor.setLayoutX(x - img_offset_x);
+        icon_anchor.setLayoutY(y - img_offset_y);
+
+        // Set the form
+        form_vbox.setLayoutX(x - form_vbox_x_offset);
+        form_vbox.setLayoutY(y - form_vbox_y_offset);
+    }
+
+    // Calculate where to display the form
+    public void set_marker_point(double x, double y, double image_width, double image_height, double zoom_level) {
+        point_x = x;
+        point_y = y;
 
         // Set the form to next to the icon, depending on how close to the edge
         // Base case
-        double form_vbox_y_offset = form_vbox.getHeight() / 2;
-        double form_vbox_x_offset = - img_offset_x * 2;
+        form_vbox_y_offset = form_vbox.getHeight() / 2;
+        form_vbox_x_offset = - img_offset_x * 2;
         // Too close to bottom of screen
+        System.out.println("y+: " + (y + form_vbox.getHeight()) + " image height: " + image_height);
         if ((y + form_vbox.getHeight()) >= image_height) {
             form_vbox_y_offset *= 2;
         // Too close to top of screen
@@ -84,11 +93,7 @@ public class MarkerController {
                 System.err.println("WARNING: Marker too close to right side, setting to invisible...");
             }
         }
-        stored_form_x = x - form_vbox_x_offset;
-        stored_form_y = y - form_vbox_y_offset;
-        form_vbox.setLayoutX(stored_form_x);
-        form_vbox.setLayoutY(stored_form_y);
-
+        set_layout(zoom_level);
     }
 
     public void set_visible(boolean value) {

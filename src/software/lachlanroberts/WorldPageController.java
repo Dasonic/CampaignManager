@@ -85,8 +85,7 @@ public class WorldPageController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
             group_stack.getChildren().add(fxmlLoader.load());
             MarkerController marker = fxmlLoader.getController();
-            marker.set_marker_point(selected_x, selected_y, image_width, image_height);
-            marker.set_zoom_level(zoom_level);
+            marker.set_marker_point(selected_x, selected_y, image_width / zoom_level, image_height / zoom_level, zoom_level);
             all_marker_controllers.add(marker);
         } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
             for (MarkerController marker_controller : all_marker_controllers) {
