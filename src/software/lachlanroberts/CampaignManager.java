@@ -17,9 +17,10 @@ public class CampaignManager extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("Layout.fxml"));
-
         primaryStage.setTitle("Campaign Manager");
-        primaryStage.setScene(new Scene(root, 1280, 720));
+        Scene scene = new Scene(root, 1280, 720);
+        scene.getStylesheets().add("styling.css");
+        primaryStage.setScene(scene);
         primaryStage.show();
 
     }
