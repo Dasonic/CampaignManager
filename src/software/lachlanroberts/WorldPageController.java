@@ -41,11 +41,15 @@ public class WorldPageController implements Initializable {
     }
 
     public void set_zoom_level(double zoom_level) {
+        double prev_h_value = img_pane.getHvalue();
+        double prev_v_value = img_pane.getVvalue();
         this.zoom_level = zoom_level;
         var temp_img_width = scroll_img.getImage().getWidth();
         var temp_img_height = scroll_img.getImage().getHeight();
         scroll_img.setScaleX(zoom_level);
         scroll_img.setScaleY(zoom_level);
+        img_pane.setHvalue(prev_h_value);
+        img_pane.setVvalue(prev_v_value);
         // scale expends from center, so need to move it
         double ratio = (zoom_level - 1) / 2.0;
         scroll_img.setTranslateX(temp_img_width * ratio);
@@ -96,11 +100,8 @@ public class WorldPageController implements Initializable {
                 all_marker_controllers.remove(all_marker_controllers.size() - 1);
             }
         } else {
-            calculate_scroll_differences();
-            double selected_y = (scroll_difference_y * img_pane.getVvalue()) + mouseEvent.getY();
-            double selected_x = (scroll_difference_x * img_pane.getHvalue()) + mouseEvent.getX();
-            Circle circ = new Circle(selected_x, selected_y, 10);
-            group_stack.getChildren().add(circ);
+//            img_pane.setHvalue(0.5);
+            System.out.println(img_pane.getHvalue());
         }
     }
 

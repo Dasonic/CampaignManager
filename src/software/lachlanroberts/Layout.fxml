@@ -7,40 +7,60 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
 <VBox fx:controller="software.lachlanroberts.LayoutController" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" onAction="#new_clicked"/>
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Zoom In" onAction="#zoom_in" />
-            <MenuItem mnemonicParsing="false" text="Zoom Out" onAction="#zoom_out"/>
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-    <StackPane fx:id="stack_pane">
+    <HBox>
+      <MenuBar VBox.vgrow="NEVER" HBox.hgrow="ALWAYS">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="New" onAction="#new_clicked"/>
+              <MenuItem mnemonicParsing="false" text="Open…" />
+              <Menu mnemonicParsing="false" text="Open Recent" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" text="Save" />
+              <MenuItem mnemonicParsing="false" text="Save As…" />
+              <MenuItem mnemonicParsing="false" text="Revert" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="Preferences…" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="Quit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Zoom In" onAction="#zoom_in" />
+              <MenuItem mnemonicParsing="false" text="Zoom Out" onAction="#zoom_out"/>
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+<!--      <Button text="+" onAction="#zoom_in"/>-->
+      <Button fx:id="zoom_in_button" onAction="#zoom_in" >
+        <HBox.margin>
+          <Insets right="5" />
+        </HBox.margin>
+      </Button>
+      <Button fx:id="zoom_out_button" onAction="#zoom_out" >
+        <HBox.margin>
+          <Insets right="20.0" />
+        </HBox.margin>
+      </Button>
+      <ImageView fx:id="zoom_in_img" />
+      <ImageView fx:id="zoom_out_img"/>
+    </HBox>
+    <StackPane fx:id="stack_pane" >
     </StackPane>
   </children>
 </VBox>

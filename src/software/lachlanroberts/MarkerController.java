@@ -74,7 +74,6 @@ public class MarkerController {
         form_vbox_y_offset = form_vbox.getHeight() / 2;
         form_vbox_x_offset = - img_offset_x * 2;
         // Too close to bottom of screen
-        System.out.println("y+: " + (y + form_vbox.getHeight()) + " image height: " + image_height);
         if ((y + form_vbox.getHeight()) >= image_height) {
             form_vbox_y_offset *= 2;
         // Too close to top of screen
