@@ -3,131 +3,182 @@ package software.lachlanroberts;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 public class MarkerController {
     @FXML
-    private AnchorPane icon_anchor;
-    @FXML
     private Group group;
+    @FXML
+    private AnchorPane iconAnchor;
     @FXML
     private ImageView icon;
     @FXML
-    private TextField title_textfield;
+    private VBox formVbox;
     @FXML
-    private TextArea description_textarea;
+    private TextField titleTextfield;
     @FXML
-    private Button form_button;
+    private TextArea shortDescriptionTextArea;
     @FXML
-    private VBox form_vbox;
+    private Hyperlink notePageLink;
+    @FXML
+    private Button formButton;
 
-    private double img_offset_x;
-    private double img_offset_y;
+    // Marker contents variables
     private String title;
-    private String description;
-    private long last_hidden = 0;
+    private String shortDescription;
+    private String fullDescription;
 
-    private double point_x = 0;
-    private double point_y = 0;
-    private double form_vbox_x_offset = 0;
-    private double form_vbox_y_offset = 0;
+    // Marker status variables
+    private long lastHidden = 0;
+
+    // Positioning variables
+    private double pointX = 0;
+    private double pointY = 0;
+    private double imgOffsetX;
+    private double imgOffsetY;
+    private double formVboxXOffset = 0;
+    private double formVboxYOffset = 0;
+
+    private LayoutController layoutController;
+
+    public void setLinkedNotePage(NotePageController linkedNotePage) {
+        this.linkedNotePage = linkedNotePage;
+    }
+
+    private NotePageController linkedNotePage;
 
     @FXML
     private void initialize() {
-        Image new_img = new Image("map-pin.png");
-        icon.setImage(new_img);
+        Image newImg = new Image("map-pin.png");
+        icon.setImage(newImg);
 
-        img_offset_x = icon.getImage().getWidth() / 2;
-        img_offset_y = icon.getImage().getHeight();
+        imgOffsetX = icon.getImage().getWidth() / 2;
+        imgOffsetY = icon.getImage().getHeight();
     }
 
-    public void set_zoom_level(double zoom_level) {
-        set_layout(zoom_level);
+    public void setZoomLevel(double zoomLevel) {
+        setLayout(zoomLevel);
     }
 
-    private void set_layout(double zoom_level) {
-        double x = point_x * zoom_level;
-        double y = point_y * zoom_level;
+    private void setLayout(double zoomLevel) {
+        double x = pointX * zoomLevel;
+        double y = pointY * zoomLevel;
 
         // Set the icon
-        icon_anchor.setLayoutX(x - img_offset_x);
-        icon_anchor.setLayoutY(y - img_offset_y);
+        iconAnchor.setLayoutX(x - imgOffsetX);
+        iconAnchor.setLayoutY(y - imgOffsetY);
 
         // Set the form
-        form_vbox.setLayoutX(x - form_vbox_x_offset);
-        form_vbox.setLayoutY(y - form_vbox_y_offset);
+        formVbox.setLayoutX(x - formVboxXOffset);
+        formVbox.setLayoutY(y - formVboxYOffset);
     }
 
     // Calculate where to display the form
-    public void set_marker_point(double x, double y, double image_width, double image_height, double zoom_level) {
-        point_x = x;
-        point_y = y;
+    public void setMarkerPoint(double x, double y, double imageWidth, double imageHeight, double zoomLevel) {
+        pointX = x;
+        pointY = y;
 
         // Set the form to next to the icon, depending on how close to the edge
         // Base case
-        form_vbox_y_offset = form_vbox.getHeight() / 2;
-        form_vbox_x_offset = - img_offset_x * 2;
+//        formVboxYOffset = formVbox.getHeight() / 2;
+        formVboxYOffset = 320 / 2.0; // getHeight returns incorrect value, so form height is hard coded
+        formVboxXOffset = -imgOffsetX * 2;
         // Too close to bottom of screen
-        if ((y + form_vbox.getHeight()) >= image_height) {
-            form_vbox_y_offset *= 2;
+        if ((y + formVbox.getHeight()) >= imageHeight) {
+            formVboxYOffset *= 2;
         // Too close to top of screen
-        } else if (y < form_vbox.getHeight() / 2) {
-            form_vbox_y_offset = img_offset_y;
-            if (y < img_offset_y) { // Too close to top of screen to create marker
+        } else if (y < formVbox.getHeight() / 2) {
+            formVboxYOffset = imgOffsetY;
+            if (y < imgOffsetY) { // Too close to top of screen to create marker
                 group.setVisible(false);
                 System.err.println("WARNING: Marker too close to top, setting to invisible...");
             }
         }
         // Too close to right side of screen
-        if ((x - form_vbox_x_offset + form_vbox.getWidth()) > image_width) {
-            form_vbox_x_offset = -form_vbox_x_offset + form_vbox.getWidth();
-            if (x > image_width - img_offset_x) { // Too close to right of screen to create marker
+        if ((x - formVboxXOffset + formVbox.getWidth()) > imageWidth) {
+            formVboxXOffset = -formVboxXOffset + formVbox.getWidth();
+            if (x > imageWidth - imgOffsetX) { // Too close to right of screen to create marker
                 group.setVisible(false);
                 System.err.println("WARNING: Marker too close to right side, setting to invisible...");
             }
         }
-        set_layout(zoom_level);
+        setLayout(zoomLevel);
     }
 
-    public void set_visible(boolean value) {
-        if (System.currentTimeMillis() > (100 + last_hidden)) {
+    public void setFormVisible(boolean value) {
+        if (System.currentTimeMillis() > (100 + lastHidden)) { // Stop the visibility being changed instantly
             if (!value) { // Remove unsaved changes when hiding
-                title_textfield.setText(title);
-                description_textarea.setText(description);
-                title_textfield.setDisable(true);
-                description_textarea.setDisable(true);
+                titleTextfield.setText(title);
+                shortDescriptionTextArea.setText(shortDescription);
+                titleTextfield.setDisable(true);
+                shortDescriptionTextArea.setDisable(true);
+                formButton.setText("Edit Marker");
             }
-            form_vbox.setVisible(value);
-            last_hidden = System.currentTimeMillis();
+            formVbox.setVisible(value);
+            lastHidden = System.currentTimeMillis();
         }
     }
 
-    public boolean is_confirmed() {
+    public boolean isConfirmed() {
         return (title != null);
     }
 
 
-    public void submit_form(MouseEvent mouseEvent) {
-        if (title_textfield.isDisabled()) { // Allow editing
-            title_textfield.setDisable(false);
-            description_textarea.setDisable(false);
-            form_button.setText("Confirm Marker");
+    @FXML
+    public void submitForm() {
+        if (titleTextfield.isDisabled()) { // Allow editing
+            titleTextfield.setDisable(false);
+            shortDescriptionTextArea.setDisable(false);
+            notePageLink.setDisable(true);
+            formButton.setText("Confirm Marker");
         } else { // Save new details!
-            title = title_textfield.getText();
-            description = description_textarea.getText();
-            title_textfield.setDisable(true);
-            description_textarea.setDisable(true);
-            form_button.setText("Edit Marker");
+            title = titleTextfield.getText();
+            shortDescription = shortDescriptionTextArea.getText();
+            if (linkedNotePage != null) // Update the note page if its open
+                linkedNotePage.fetchMarkerInfo();
+            titleTextfield.setDisable(true);
+            shortDescriptionTextArea.setDisable(true);
+            notePageLink.setDisable(false);
+            formButton.setText("Edit Marker");
         }
     }
 
-    public void icon_clicked(MouseEvent mouseEvent) {
-        set_visible(true);
+    public void iconClicked() {
+        setFormVisible(true);
+    }
+
+    public void setLayoutController(LayoutController layout) { this.layoutController = layout; }
+
+    public String getTitle() {return title;}
+
+    public void setTitle(String newTitle) {
+        title = newTitle;
+        titleTextfield.setText(newTitle);
+    }
+
+    public String getShortDescription() { return shortDescription;}
+
+    public void setShortDescription(String newDescription) {
+        shortDescription = newDescription;
+        shortDescriptionTextArea.setText(newDescription);
+    }
+
+    public String getFullDescription() {
+        return fullDescription;
+    }
+
+    public void setFullDescription(String fullDescription) {
+        this.fullDescription = fullDescription;
+    }
+
+    @FXML
+    private void openTab() {
+        layoutController.openTab(title);
     }
 }

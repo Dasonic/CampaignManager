@@ -1,64 +1,116 @@
 package software.lachlanroberts;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+
 import java.io.IOException;
 
 public class LayoutController {
     @FXML
-    private StackPane stack_pane;
+    private TabPane tabPane;
     @FXML
-    private ImageView zoom_in_img;
+    private ImageView zoomInImg;
     @FXML
-    private ImageView zoom_out_img;
+    private ImageView zoomOutImg;
     @FXML
-    private Button zoom_in_button;
+    private Button zoomInButton;
     @FXML
-    private Button zoom_out_button;
+    private Button zoomOutButton;
+    @FXML
+    private Tab worldMapTab;
 
-    private WorldPageController world_page_controller;
-    private double zoom_level = 1;
+    private WorldPageController worldPageController;
+    private double zoomLevel = 1;
 
     @FXML
     private void initialize() {
-        Image zoom_in_icon = new Image("zoom-in.png");
-        Image zoom_out_icon = new Image("zoom-out.png");
-        zoom_in_img.setImage(zoom_in_icon);
-        zoom_out_img.setImage(zoom_out_icon);
-        zoom_in_button.setGraphic(zoom_in_img);
-        zoom_out_button.setGraphic(zoom_out_img);
+        // Set up the zoom icons
+        Image zoomInIcon = new Image("zoom-in.png");
+        Image zoomOutIcon = new Image("zoom-out.png");
+        zoomInImg.setImage(zoomInIcon);
+        zoomOutImg.setImage(zoomOutIcon);
+        zoomInButton.setGraphic(zoomInImg);
+        zoomOutButton.setGraphic(zoomOutImg);
     }
 
-    public void new_clicked(ActionEvent actionEvent) {
+    // Load the world map
+    public void newClicked() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("WorldPage.fxml"));
         try {
-            stack_pane.getChildren().add(loader.load());
-            world_page_controller = loader.getController();
+            worldMapTab.setContent(loader.load());
+            worldPageController = loader.getController();
+            worldPageController.parent = this;
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        zoom_hbox.toFront();
     }
 
-    public void zoom_out() {
-        if (zoom_level != 1 && world_page_controller != null) {
-            zoom_level--;
+    public void zoomOut() {
+        if (zoomLevel != 1 && worldPageController != null) {
+            zoomLevel--;
             zoom();
         }
     }
 
-    public void zoom_in() {
-        if (world_page_controller != null) {
-            zoom_level++;
+    public void zoomIn() {
+        if (worldPageController != null) {
+            zoomLevel++;
             zoom();
         }
     }
     public void zoom() {
-        world_page_controller.set_zoom_level(zoom_level);
+        worldPageController.setZoomLevel(zoomLevel);
     }
+
+//    public void addListener(MarkerController marker) {
+//        marker.valueProperty().addListener((observable, oldValue, newValue) -> createNotePageTab(marker));
+//    }
+
+    private Tab createNotePageTab(MarkerController marker) {
+        Tab newPageTab = new Tab(marker.getTitle());
+        newPageTab.setClosable(true);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("NotePage.fxml"));
+        NotePageController newPageController;
+        try {
+            newPageTab.setContent(loader.load());
+            newPageController = (NotePageController)loader.getController();
+            newPageController.setTab(newPageTab);
+            newPageController.setLinkedMarker(marker);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newPageTab;
+    }
+
+
+
+    public void openTab(String tab_name) {
+        Tab tabFound = null;
+        // First check if the tab is open
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab.getText().equals(tab_name)) { // Switch to the tab and end function
+                tabFound = tab;
+            }
+        }
+        // If not, create a new tab
+        if (tabFound == null) {
+            MarkerController markerFound = worldPageController.findMarker(tab_name);
+            if (markerFound != null) {
+                tabFound = createNotePageTab(markerFound);
+                tabPane.getTabs().add(tabFound);
+            }
+            else { // If a marker isn't found, print error and abort tab opening
+                System.err.println("ERROR: Marker not found, tab opening failed.");
+                return;
+            }
+        }
+        // Switch to tab
+        tabPane.getSelectionModel().select(tabFound);
+    }
+
 }
