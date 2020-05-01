@@ -25,7 +25,7 @@ public class NewCampaignModalController {
     private TextField saveFolderLocationTextField;
 
     File selectedFile;
-    File saveFolderLocation;
+    String saveFolderLocation;
 
     public void setLayoutController(LayoutController layoutController) {
         this.layoutController = layoutController;
@@ -45,9 +45,9 @@ public class NewCampaignModalController {
         directoryChooser.setTitle("Select a save directory");
 //        directoryChooser.setInitialDirectory();
 
-        saveFolderLocation = directoryChooser.showDialog(folderSelectStage);
-        if (saveFolderLocation != null)
-            saveFolderLocationTextField.setText(saveFolderLocation.toString());
+        saveFolderLocation = directoryChooser.showDialog(folderSelectStage).toString();
+        if (saveFolderLocation != null && !saveFolderLocation.equals(""))
+            saveFolderLocationTextField.setText(saveFolderLocation + titleTextField.getText()); // TODO: bind this to update with title field
     }
 
     @FXML
@@ -64,9 +64,11 @@ public class NewCampaignModalController {
     @FXML
     private void createSave() {
         if (selectedFile != null && saveFolderLocation != null) {
+            saveFolderLocation += "/" + titleTextField.getText(); // Add a new folder to the directory
+
             Image map = new Image(selectedFile.toURI().toString());
             BufferedImage bufferedMap = SwingFXUtils.fromFXImage(map, null); // Convert to a buffered image so it can be saved
-            String mapSavePath = saveFolderLocation.toString() + "/" + titleTextField.getText() + ".png";
+            String mapSavePath = saveFolderLocation + "/map.png";
             try {
                 ImageIO.write(bufferedMap, "png", new File(mapSavePath));
             } catch (IOException e) {
