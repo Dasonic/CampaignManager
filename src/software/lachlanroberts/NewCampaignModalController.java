@@ -63,6 +63,7 @@ public class NewCampaignModalController {
 
     @FXML
     private void createSave() {
+        // TODO: check if files already exist
         if (selectedFile != null && saveFolderLocation != null) {
             saveFolderLocation += "/" + titleTextField.getText(); // Add a new folder to the directory
 
