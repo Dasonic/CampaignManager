@@ -43,10 +43,11 @@ public class NewCampaignModalController {
         Stage folderSelectStage = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select a save directory");
+        System.out.println(directoryChooser.getInitialDirectory());
 //        directoryChooser.setInitialDirectory();
-
-        saveFolderLocation = directoryChooser.showDialog(folderSelectStage).toString();
-        if (saveFolderLocation != null && !saveFolderLocation.equals(""))
+        File directory = directoryChooser.showDialog(folderSelectStage);
+        if (directory != null)
+            saveFolderLocation = directory.toString();
             saveFolderLocationTextField.setText(saveFolderLocation + titleTextField.getText()); // TODO: bind this to update with title field
     }
 
@@ -76,7 +77,7 @@ public class NewCampaignModalController {
                 e.printStackTrace();
             }
             if (layoutController != null) {
-                layoutController.loadNewCampaign(mapSavePath);
+                layoutController.loadCampaign(mapSavePath);
                 closeModal();
             }
         } else {

@@ -1,5 +1,6 @@
 package software.lachlanroberts;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -41,7 +42,7 @@ public class LayoutController {
         zoomOutButton.setGraphic(zoomOutImg);
     }
 
-    // Load the world map
+    // Create a new scene (modal) to display newCampaignModal
     public void newClicked() throws IOException {
         Stage newCampaignModal = new Stage();
         newCampaignModal.setTitle("New Campaign");
@@ -54,8 +55,21 @@ public class LayoutController {
         newCampaignModal.showAndWait();
     }
 
+    // Create a new scene (modal) to display loadCampaignModal
+    public void openClicked() throws IOException {
+        Stage loadCampaignModal = new Stage();
+        loadCampaignModal.setTitle("Load Campaign");
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoadCampaignModal.fxml"));
+        Parent root = fxmlLoader.load();
+        LoadCampaignModalController loadCampaignModalController = fxmlLoader.getController();
+        Scene loadCampaignScene = new Scene(root, 600, 200);
+        loadCampaignModal.setScene(loadCampaignScene);
+        loadCampaignModalController.setLayoutController(this);
+        loadCampaignModal.showAndWait();
+    }
 
-    public void loadNewCampaign(String mapURL) {
+
+    public void loadCampaign(String mapURL) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("WorldPage.fxml"));
         try {
             worldMapTab.setContent(loader.load());
@@ -99,7 +113,6 @@ public class LayoutController {
         }
         return newPageTab;
     }
-
 
 
     public void openTab(String tab_name) {
