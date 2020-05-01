@@ -2,7 +2,6 @@ package software.lachlanroberts;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -10,14 +9,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 
-public class WorldPageController implements Initializable {
+public class WorldPageController {
     @FXML
     private ImageView scrollImg;
     @FXML
@@ -35,9 +34,10 @@ public class WorldPageController implements Initializable {
 
     private List<MarkerController> allMarkerControllers = new ArrayList<>();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Image new_img = new Image("dndmap.jpg");
+    public void setMap(String mapURL) throws FileNotFoundException {
+        System.out.println(mapURL);
+        FileInputStream fileInputStream = new FileInputStream(mapURL);
+        Image new_img = new Image(fileInputStream);
         scrollImg.setImage(new_img);
     }
 

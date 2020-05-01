@@ -2,11 +2,14 @@ package software.lachlanroberts;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -39,12 +42,26 @@ public class LayoutController {
     }
 
     // Load the world map
-    public void newClicked() {
+    public void newClicked() throws IOException {
+        Stage newCampaignModal = new Stage();
+        newCampaignModal.setTitle("New Campaign");
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("NewCampaignModal.fxml"));
+        Parent root = fxmlLoader.load();
+        NewCampaignModalController newCampaignModalController = fxmlLoader.getController();
+        Scene newCampaignScene = new Scene(root, 600, 400);
+        newCampaignModal.setScene(newCampaignScene);
+        newCampaignModalController.setLayoutController(this);
+        newCampaignModal.showAndWait();
+    }
+
+
+    public void loadNewCampaign(String mapURL) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("WorldPage.fxml"));
         try {
             worldMapTab.setContent(loader.load());
             worldPageController = loader.getController();
             worldPageController.parent = this;
+            worldPageController.setMap(mapURL);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,10 +84,6 @@ public class LayoutController {
         worldPageController.setZoomLevel(zoomLevel);
     }
 
-//    public void addListener(MarkerController marker) {
-//        marker.valueProperty().addListener((observable, oldValue, newValue) -> createNotePageTab(marker));
-//    }
-
     private Tab createNotePageTab(MarkerController marker) {
         Tab newPageTab = new Tab(marker.getTitle());
         newPageTab.setClosable(true);
@@ -78,7 +91,7 @@ public class LayoutController {
         NotePageController newPageController;
         try {
             newPageTab.setContent(loader.load());
-            newPageController = (NotePageController)loader.getController();
+            newPageController = loader.getController();
             newPageController.setTab(newPageTab);
             newPageController.setLinkedMarker(marker);
         } catch (IOException e) {
