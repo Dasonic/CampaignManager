@@ -25,7 +25,7 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
     </rowConstraints>
     <Text strokeType="OUTSIDE" strokeWidth="0.0"
-          text="To create a new campaign, enter a title and select an image of your map. A world map works best."
+          text="To load a campaign, Select the folder the data is saved in."
           wrappingWidth="300.0" GridPane.columnIndex="1"/>
     <Label text="Save Folder:" GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
     <TextField editable="false" promptText="Select a folder..." GridPane.columnIndex="1" GridPane.rowIndex="1"

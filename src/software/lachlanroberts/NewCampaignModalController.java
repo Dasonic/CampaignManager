@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewCampaignModalController {
     @FXML
@@ -72,12 +74,13 @@ public class NewCampaignModalController {
             BufferedImage bufferedMap = SwingFXUtils.fromFXImage(map, null); // Convert to a buffered image so it can be saved
             String mapSavePath = saveFolderLocation + "/map.png";
             try {
-                ImageIO.write(bufferedMap, "png", new File(mapSavePath));
+                ImageIO.write(bufferedMap, "png", new File(mapSavePath)); // TODO Create folder is it does not exist
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (layoutController != null) {
-                layoutController.loadCampaign(mapSavePath);
+                List<MarkerData> allMarkerData = new ArrayList<>();
+                layoutController.loadCampaign(mapSavePath, saveFolderLocation, allMarkerData);
                 closeModal();
             }
         } else {

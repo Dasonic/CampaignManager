@@ -32,7 +32,12 @@ public class WorldPageController {
     private double imageHeight = 0;
     private double zoomLevel = 1;
 
+
     private List<MarkerController> allMarkerControllers = new ArrayList<>();
+
+    public List<MarkerController> getAllMarkerControllers() {
+        return allMarkerControllers;
+    }
 
     public void setMap(String mapURL) throws FileNotFoundException {
         System.out.println(mapURL);
@@ -80,21 +85,14 @@ public class WorldPageController {
     }
 
 
-    public void imagePaneMouseClicked(MouseEvent mouseEvent) throws IOException {
+    public void imagePaneMouseClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) { // If double clicked - create new marker
             // Calculate the X and Y relative to the map (image) instead of the program
             calculateScrollDifferences();
             double selectedY = ((scrollDifferenceY * imgPane.getVvalue()) + mouseEvent.getY()) / zoomLevel;
             double selectedX = ((scrollDifferenceX * imgPane.getHvalue()) + mouseEvent.getX()) / zoomLevel;
             System.out.println("X: " + selectedX + " Y: " + selectedY);
-
-            // Create a new marker
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
-            groupStack.getChildren().add(fxmlLoader.load());
-            MarkerController marker = fxmlLoader.getController();
-            marker.setMarkerPoint(selectedX, selectedY, imageWidth / zoomLevel, imageHeight / zoomLevel, zoomLevel);
-            marker.setLayoutController(parent);
-            allMarkerControllers.add(marker);
+            createMarker(selectedX, selectedY);
         } else if (mouseEvent.getButton() == MouseButton.PRIMARY) { // If single clicked, set all the marker forms to invisible
             for (MarkerController markerController : allMarkerControllers) {
                 markerController.setFormVisible(false);
@@ -105,6 +103,34 @@ public class WorldPageController {
             }
         }
     }
+    public void loadMarker(MarkerData data) {
+        // Create a new marker
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
+        try {
+            groupStack.getChildren().add(fxmlLoader.load());
+            MarkerController marker = fxmlLoader.getController();
+            marker.setFormVisible(false);
+            marker.setData(data);
+            marker.setLayoutController(parent);
+            allMarkerControllers.add(marker);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void createMarker(double selectedX, double selectedY) {
+        // Create a new marker
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Marker.fxml"));
+        try {
+            groupStack.getChildren().add(fxmlLoader.load());
+            MarkerController marker = fxmlLoader.getController();
+            marker.setMarkerPoint(selectedX, selectedY, imageWidth / zoomLevel, imageHeight / zoomLevel, zoomLevel);
+            marker.setLayoutController(parent);
+            allMarkerControllers.add(marker);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public MarkerController findMarker(String title) {
         for (MarkerController marker : allMarkerControllers) {
             if (marker.getTitle().equals(title))

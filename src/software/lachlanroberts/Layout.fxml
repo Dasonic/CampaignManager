@@ -12,7 +12,7 @@
         <MenuItem mnemonicParsing="false" text="New" onAction="#newClicked"/>
         <MenuItem mnemonicParsing="false" text="Open…" onAction="#openClicked"/>
         <SeparatorMenuItem mnemonicParsing="false"/>
-        <MenuItem mnemonicParsing="false" text="Save"/>
+        <MenuItem mnemonicParsing="false" text="Save" onAction="#saveClicked"/>
         <MenuItem mnemonicParsing="false" text="Save As…"/>
         <SeparatorMenuItem mnemonicParsing="false"/>
         <MenuItem mnemonicParsing="false" text="Preferences…"/>

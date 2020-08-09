@@ -7,6 +7,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoadCampaignModalController {
     @FXML
@@ -43,10 +48,21 @@ public class LoadCampaignModalController {
     @FXML
     private void loadSave() {
         if (saveFolderLocation != null) {
+            // Load the map
             String mapSavePath = saveFolderLocation + "/map.png";
-            if (layoutController != null) {
-                layoutController.loadCampaign(mapSavePath);
-                closeModal();
+            // Load the markers
+            try {
+                FileInputStream readData = new FileInputStream(saveFolderLocation + "/Markers.ser");
+                ObjectInputStream readStream = new ObjectInputStream(readData);
+                List<MarkerData> allMarkerData = (List<MarkerData>)readStream.readObject();
+                readStream.close();
+
+                if (layoutController != null) {
+                    layoutController.loadCampaign(mapSavePath, saveFolderLocation, allMarkerData);
+                    closeModal();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
